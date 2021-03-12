@@ -2,10 +2,10 @@
 Final project for w202, University of California, Berkeley MICS program.
 
 ## Contributors
-Nathaniel Singer <nathaniel.singer@berkeley.edu>
-Lauren Ayala <layala23@berkeley.edu>
-Jeremy Carlson <jscarlson@berkeley.edu>
-Mariah Martinez <mariah.martinez@berkeley.edu>
+``Nathaniel Singer <nathaniel.singer@berkeley.edu><br>
+Lauren Ayala <layala23@berkeley.edu><br>
+Jeremy Carlson <jscarlson@berkeley.edu><br>
+Mariah Martinez <mariah.martinez@berkeley.edu><br>``
 
 # Execution
 ## Overview
