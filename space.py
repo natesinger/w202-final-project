@@ -24,6 +24,9 @@ def run():
     bind_port = 54321
     if args.port != None: bind_port = args.port
 
+    #abort if port invalid range, type checked by argparse
+    if not (0 < bind_port < 65535): exit("[!] Invalid port specification")
+
     #warn if port is non-ephemeral
     if bind_port < 49152: print(f"{ansi_esc(93)}[!]{ansi_esc(0)} Port is non-ephemeral, may need to ensure correct perms and deconflict...")
 

@@ -1,6 +1,5 @@
 #short random utilities go here
 import time
-import contextlib
 
 #define ANSI escape for coloring: https://en.wikipedia.org/wiki/ANSI_escape_code
 def ansi_esc(code): return f'\033[{code}m'

@@ -1,0 +1,2 @@
+
+class InvalidFrameError(Exception): pass

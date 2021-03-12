@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from ground_segment import *
+from ground_segment.gs_core import send_test_frame
 from misc.tools import ansi_esc
 import argparse
 
@@ -23,13 +23,13 @@ def run():
     if server_address != None: server_address = args.address
 
     #override default port
-    server_port = 1234
+    server_port = 54321
     if args.port != None: server_port = args.port
 
     #warn if port is non-ephemeral
     if server_port < 49152: print(f"{ansi_esc(93)}[!]{ansi_esc(0)} Port is non-ephemeral, may need to ensure correct perms and deconflict...")
 
-    print("nice")
+    send_test_frame()
 
 """
     #Prevent file overwrite
