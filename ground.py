@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+from ground_segment import *
+from misc.tools import ansi_esc
 import argparse
 
 def run():
@@ -8,10 +10,12 @@ def run():
     parser = argparse.ArgumentParser(description='Run the <w202-final> client for connection to SV.')
     #parser.add_argument(dest='<address> <>', metavar='<file>', type=str, nargs='+',
     #                    help='file(s) to operate on, typical argument vector \"**argv\"')
-    parser.add_argument('-a', '--address', dest='address', type=str, metavar='<152.132.18.19>', required=True,
+    parser.add_argument('-a', '--address', dest='address', type=str, metavar='<152.132.18.19>',
                         help='Server address, default is \'localhost\'')
-    parser.add_argument('-p', '--port', dest='port', type=int, metavar='<1234>', required=True,
-                        help='Server port, ephemeral prefered, default is 1234')
+    parser.add_argument('-p', '--port', dest='port', type=int, metavar='<54321>',
+                        help='Server port, ephemeral prefered, default is 54321')
+    parser.add_argument('-st', '--static-test', dest='test', action='store_true',
+                        help='Static test frame')
     args = parser.parse_args()
 
     #override default ip
@@ -20,8 +24,12 @@ def run():
 
     #override default port
     server_port = 1234
-    if args.radius_mi != None: radius_mi = args.port
+    if args.port != None: server_port = args.port
 
+    #warn if port is non-ephemeral
+    if server_port < 49152: print(f"{ansi_esc(93)}[!]{ansi_esc(0)} Port is non-ephemeral, may need to ensure correct perms and deconflict...")
+
+    print("nice")
 
 """
     #Prevent file overwrite
