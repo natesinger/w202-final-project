@@ -5,16 +5,15 @@ class Frame:
     def __init__(self, frame_bstr:str, debug:bool=False): #TODO This should be a bytestring not str
         selection, options, payload, checksum = self.split_frame(frame_bstr)
 
-        print(selection)
-        print(options)
-        print(len(payload))
-        print(checksum)
-
         if not self.checksum_validation(frame_bstr, checksum): raise InvalidFrameError #TODO do we need exit logic here?
+
+        self.execute_request(int.from_bytes(selection, byteorder='little', signed=False), options, payload)
 
     def split_frame(self, frame_bstr:str) -> [str, str]:
         starting_position = frame_bstr.find(b'\xDE\xAD\xBE\xEF') + 4 #compensate for tag itself
         ending_position = frame_bstr.find(b'\xBE\xEF\xDE\xAD')
+
+        ## TODO vaidate that the payload is 1012 bytes so we recieeved the full frame
 
         if (starting_position == -1) or (ending_position == -1): #couldnt locate
             #raise InvalidFrameError
@@ -48,21 +47,47 @@ class Frame:
 
         return True
 
-    def execute_request(self, selection:int, options:int):
+    def execute_request(self, selection:int, options:int, payload:str):
         """this is where we do action selection and such"""
         if selection == 1:
-            selecton_key_manipulation(options)
+            self.selecton_key_manipulation(options, payload)
+            #selecton_key_manipulation(options)
         elif selection == 2:
-            selection_data_exchange(options)
+            self.selection_data_exchange(options, payload)
+            #selection_data_exchange(options)
         elif selection == 3:
-            selection_firmware_validation(options)
+            self.selection_firmware_validation(options, payload)
+            #selection_firmware_validation(options)
 
-    def selecton_key_manipulation(self, options:int):
+    def selecton_key_manipulation(self, options:int, payload:str):
+        """This will interface with the memory class to select the active key,
+        replace existing keys in the schedule, or lookup what key is active. The
+        number of the active key can be transmitted in plaintext. This is also where
+        we will perform the asymetric key exchange."""
+
+        #select a key
+        #overwrite a key
+        #wipe the key space
+
         pass
         #from here we make a selection based on minor options and execute the action located in the actions folder
 
     def selection_data_exchange(self, options:int, payload:str):
+        """This is where our symmetric exchange will happen, basically just need
+        to determine how we want to chunk out the payload block, assuming AES256
+        and then work it onto a bytestring return for transmission"""
+
+        # send or recieve encrypted data
+
         pass
 
-    def selection_firmware_validation(self, options:int):
+    def selection_firmware_validation(self, options:int, payload:str):
+        """I think we will want to simulate this, something like creating a file
+        with a bunch of random junk in it, and then passing the hash back and
+        forth. If we had this compiled (C something) we could run it against the
+        binaries, but since its python bytecode, its dynamic so that wont work"""
+
+        ## TODO
+        #run a hash on the "memory space" and send down to ground for valdiation
+
         pass

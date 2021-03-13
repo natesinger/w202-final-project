@@ -8,7 +8,7 @@ SERVER_PORT = 54321
 
 START_INDICATOR = b'\xDE\xAD\xBE\xEF'
 STOP_INDICATOR = b'\xBE\xEF\xDE\xAD'
-major_options = b'\x02' #one byte
+major_options = b'\x01' #one byte
 minor_options = b'\xEF\xAB' #three bytes
 payload = b'A'*1012 #1012 bytes of payload space
 checksum = b'\xFE' #one byte calculated by adding each byte in succession mod \xFF
