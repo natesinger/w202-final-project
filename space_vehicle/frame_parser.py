@@ -1,4 +1,9 @@
 from misc.custom_exceptions import *
+from space_vehicle.actions.keymgmt_select import *
+from space_vehicle.actions.keymgmt_wipe import *
+from space_vehicle.actions.keymgmt_write import *
+from space_vehicle.actions.signature_validation import *
+from space_vehicle.actions.data_send import *
 
 class Frame:
     """"""
@@ -47,8 +52,11 @@ class Frame:
 
         return True
 
-    def execute_request(self, selection:int, options:int, payload:str):
-        """this is where we do action selection and such"""
+    def execute_request(self, selection:int, options:str, payload:str):
+        """this is where we do action selection and such
+
+        TODO"""
+
         if selection == 1:
             self.selecton_key_manipulation(options, payload)
             #selecton_key_manipulation(options)
@@ -56,38 +64,43 @@ class Frame:
             self.selection_data_exchange(options, payload)
             #selection_data_exchange(options)
         elif selection == 3:
-            self.selection_firmware_validation(options, payload)
+            self.selection_firmware_validation()
             #selection_firmware_validation(options)
 
-    def selecton_key_manipulation(self, options:int, payload:str):
+    def selecton_key_manipulation(self, options:str, payload:str):
         """This will interface with the memory class to select the active key,
         replace existing keys in the schedule, or lookup what key is active. The
         number of the active key can be transmitted in plaintext. This is also where
-        we will perform the asymetric key exchange."""
+        we will perform the asymetric key exchange. Generally these functions
+        use the second byte of the options segment for indexing
 
-        #select a key
-        #overwrite a key
-        #wipe the key space
+        param::str::options
+        param::str::payload where relevant this allows for key exchange"""
 
-        pass
-        #from here we make a selection based on minor options and execute the action located in the actions folder
+        ## TODO When we strip a single byte from a byte string, do we automatically
+        ## get type conversion to an int? Curious about this, seems odd
 
-    def selection_data_exchange(self, options:int, payload:str):
+        if options[0] == 1: keymgmt_wipe()
+        elif options[0] == 2: keymgmt_select(options[1])
+        elif options[0] == 3: keymgmt_write(options[1], payload)
+        else: raise InvalidFrameError
+
+    def selection_data_exchange(self, options:str, payload:str):
         """This is where our symmetric exchange will happen, basically just need
         to determine how we want to chunk out the payload block, assuming AES256
-        and then work it onto a bytestring return for transmission"""
+        and then work it onto a bytestring return for transmission
 
-        # send or recieve encrypted data
+        param::str::options two byte options field
+        param::str::payload data to exchange, key is already selected in memory"""
 
-        pass
+        data_send(options[1], payload)
 
-    def selection_firmware_validation(self, options:int, payload:str):
+    def selection_firmware_validation(self):
         """I think we will want to simulate this, something like creating a file
         with a bunch of random junk in it, and then passing the hash back and
         forth. If we had this compiled (C something) we could run it against the
-        binaries, but since its python bytecode, its dynamic so that wont work"""
+        binaries, but since its python bytecode, its dynamic so that wont work
 
-        ## TODO
-        #run a hash on the "memory space" and send down to ground for valdiation
+        param::str::options two byte options field"""
 
-        pass
+        signature_validation()

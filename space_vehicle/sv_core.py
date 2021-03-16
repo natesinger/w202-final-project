@@ -58,6 +58,9 @@ def start_server(bind_port:int=54321):
 
                     print(f'[-] Connection Terminated {addr}')
         except KeyboardInterrupt: break #break on escape code
+        except OSError:
+            print("[!] The server couldnt start, likely due to a socket conflict. If this is due to devlopment actions give it 60s for the old socket to destruct... if this is not due to development actions, deconflict.")
+            exit()
         io.close()
 
 class ActiveConnectionBar:

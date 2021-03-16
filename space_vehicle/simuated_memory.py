@@ -30,4 +30,9 @@ if __name__ == "__main__":
 
 
 #256/32 = 8
-#so for 10 keys we need 32*10 bytes
+#so for 10 keys we need 32*10 byte
+
+
+#MUST HAVE:
+    #KEY SPACE for up to 15 keys
+    #SELECTED KEY
