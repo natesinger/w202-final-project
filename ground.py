@@ -88,10 +88,7 @@ def get_index():
             print(f"Invalid key index {key_index}")
             exit()
 
-    print(hex(int(key_index)))
-    #print( == 0xA)
-
-    return b'\xFF' #need to return this as a bytestring so we can append??
+    return int(key_index).to_bytes(1, byteorder='big')
 
 if __name__ == "__main__":
     run()
