@@ -22,9 +22,8 @@ def run_communication(selection:str, options:str, payload:str):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as io:
         io.connect((SERVER_HOST,SERVER_PORT))
         io.send(test_frame)
-        time.sleep(2)
+        time.sleep(2) #doesnt trip on itself due to threading
         io.close()
-
 
 def generate_checksum(frame_data):
     #this is generated as single byte addition mod \xFF but skipping the checksum byte position obviously
