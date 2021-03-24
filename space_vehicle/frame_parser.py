@@ -18,7 +18,7 @@ class Frame:
         starting_position = frame_bstr.find(b'\xDE\xAD\xBE\xEF') + 4 #compensate for tag itself
         ending_position = frame_bstr.find(b'\xBE\xEF\xDE\xAD')
 
-        ## TODO vaidate that the payload is 1012 bytes so we recieeved the full frame
+        ## TODO validate that the payload is 1012 bytes so we received the full frame
 
         if (starting_position == -1) or (ending_position == -1): #couldnt locate
             #raise InvalidFrameError
@@ -48,9 +48,28 @@ class Frame:
         return::bool pass fail condition whether the checksum validated
         """
 
-        ## TODO
+        ##TODO -Last Edited by Mariah-3.22.22  -- Note to self: chksum appears in pos [s:e-5:e]
+        # print(f'chksum : {chksum}  - len = {len(chksum)}') #Used for checking input value
 
-        return True
+        check_bstr = 0
+        checksum = False
+
+        if len(chksum) == 1:
+            for byte in frame_bstr[:-1]:   ## using [:-1] to strip off last byte on frame str to match chksum creation function in gs_core.py
+                check_bstr = check_bstr + byte
+
+            # After all bytes in frame are added together subtract chksum , then mod \xFF
+            check_bstr = (check_bstr - int.from_bytes(chksum, byteorder='big')) % int.from_bytes(b'\xFF', byteorder='big')
+            # print(f" bytestring byte: {check_bstr.to_bytes(1, byteorder='big') }")  # Validation -> single byte returned.
+
+            if(check_bstr == chksum):
+                checksum = True
+
+        else:
+            print("Checksum_validation Error: checksum length is not 1 byte.")
+
+        return checksum
+
 
     def execute_request(self, selection:int, options:str, payload:str):
         """this is where we do action selection and such

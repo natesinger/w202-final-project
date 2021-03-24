@@ -15,7 +15,11 @@ def run_communication(selection:str, options:str, payload:str):
     if payload == None: payload = b'\xFF' * 1012 #if no payload specified
     if len(payload) < 1012: payload = payload + (b'\xFF' * (1012 - len(payload)))
 
+    #Check :  (Validated-Mariah-3.22.22)
+    #print(f'{START_INDICATOR} : {selection} : {options} : {payload} : {STOP_INDICATOR}')
+
     checksum = generate_checksum(START_INDICATOR + selection + options + payload + STOP_INDICATOR)
+
 
     test_frame = START_INDICATOR + selection + options + payload + checksum + STOP_INDICATOR
 
@@ -27,4 +31,15 @@ def run_communication(selection:str, options:str, payload:str):
 
 def generate_checksum(frame_data):
     #this is generated as single byte addition mod \xFF but skipping the checksum byte position obviously
-    return b'\xFF'
+    ## TODO : ?? - Mariah - 3.23.22 - edited - original value: return b'\xFF'
+
+    frame = frame_data[:-1]
+    print(frame)
+    chcksum=0
+    for byte in frame: #Note: was using frame_data but getting '{' not sure why???
+        chcksum = chcksum + byte
+
+    chcksum = chcksum % int.from_bytes(b'\xFF', byteorder='big')
+    print(f" checksum byte: {chcksum.to_bytes(1, byteorder='big') }")
+
+    return chcksum.to_bytes(1, byteorder='big') #b'\xFF'

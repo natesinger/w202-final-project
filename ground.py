@@ -27,6 +27,7 @@ def run():
                         help='Request a SHA-256 hash of the SV memory space')
     args = parser.parse_args()
 
+
     ## TODO make sure we check that an option was actually selected, else help
     ## TODO fix signature validation so its just a boolean flag
 
@@ -67,7 +68,7 @@ def run():
         total_commands_selected += 1
         selection = b'\x03'
 
-    ## TODO validation to ensure two operations are not happing at once
+    ## TODO validation to ensure two operations are not happening at once
     if total_commands_selected > 1:
         print("[!] Multiple operations selected, this is not currently supported")
         exit()
