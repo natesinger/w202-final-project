@@ -12,6 +12,7 @@ STOP_INDICATOR = b'\xBE\xEF\xDE\xAD'
 ## TODO need to write the port arg and overwrite
 
 def run_communication(selection:str, options:str, payload:str):
+    print(f"Selection: {selection}\nOptions: {options}\nPayload: {payload}")
     if payload == None: payload = b'\xFF' * 1012 #if no payload specified
     if len(payload) < 1012: payload = payload + (b'\xFF' * (1012 - len(payload)))
 

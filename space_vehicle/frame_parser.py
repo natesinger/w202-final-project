@@ -2,6 +2,7 @@ from misc.custom_exceptions import *
 from space_vehicle.actions.keymgmt_select import *
 from space_vehicle.actions.keymgmt_wipe import *
 from space_vehicle.actions.keymgmt_write import *
+from space_vehicle.actions.keymgmt_regenerate import *
 from space_vehicle.actions.signature_validation import *
 from space_vehicle.actions.data_send import *
 
@@ -82,7 +83,8 @@ class Frame:
 
         if options[0] == 1: keymgmt_wipe()
         elif options[0] == 2: keymgmt_select(options[1])
-        elif options[0] == 3: keymgmt_write(options[1], payload)
+        elif options[0] == 3: keymgmt_write(options[1])
+        elif options[0] == 4: keymgmt_regenerate()
         else: raise InvalidFrameError
 
     def selection_data_exchange(self, options:str, payload:str):
@@ -93,7 +95,7 @@ class Frame:
         param::str::options two byte options field
         param::str::payload data to exchange, key is already selected in memory"""
 
-        data_send(options[1], payload)
+        data_send(options, payload)
 
     def selection_firmware_validation(self):
         """I think we will want to simulate this, something like creating a file

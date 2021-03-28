@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 
-class SpaceMemoryManager(object):
+class GroundMemoryManager(object):
     """"""
     def __init__(self):
         self.simulated_executablebinary = None
         self.running_memory = None
         self.selectedkey = None
         self.io_stream = None
-        self.memory_filename = "space_vehicle/nvram.bin" #from project root
+        self.memory_filename = "ground_segment/nvram.bin" #from project root
 
     def __enter__(self):
         self.io_stream = open(self.memory_filename,"r+b")
@@ -74,7 +74,7 @@ class SpaceMemoryManager(object):
         self.io_stream.write(b'\xFF'*512)
 
 def run():
-    with SpaceMemoryManager() as m:
+    with GroundMemoryManager() as m:
         #print(m.read_keyselection())
         m.write_key(b'\x42'*32)
         print(m.dump())
