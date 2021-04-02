@@ -31,12 +31,12 @@ def run_communication(selection:str, options:str, payload:str):
 
 def generate_checksum(frame_data):
     #this is generated as single byte addition mod \xFF but skipping the checksum byte position obviously
-    ## TODO : ?? - Mariah - 3.23.22 - edited - original value: return b'\xFF'
+    ## TODO :  - Mariah - 3.23.22 - edited - original value: return b'\xFF'
 
     frame = frame_data[:-1]
     print(frame)
     chcksum=0
-    for byte in frame: #Note: was using frame_data but getting '{' not sure why???
+    for byte in frame:
         chcksum = chcksum + byte
 
     chcksum = chcksum % int.from_bytes(b'\xFF', byteorder='big')
