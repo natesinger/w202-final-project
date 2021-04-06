@@ -3,6 +3,7 @@ import time
 import random
 import math
 import secrets ##best library for Generating secure random numbers for managing secrets
+#from Crypto.Util import number
 
 #define ANSI escape for coloring: https://en.wikipedia.org/wiki/ANSI_escape_code
 def ansi_esc(code): return f'\033[{code}m'
@@ -44,7 +45,7 @@ def is_Prime(test_Number: int):
     # Return True if num is a prime number, simple, slightly faster way to check if it is a prime number than RabinMiller
     if (test_Number < 2):
         return False  # 0, 1, and negative numbers are not prime.
-    for i in range(2, int(math.sqrt(100)) + 1):
+    for i in range(2, int(math.sqrt(100)) + 1,2):
         if test_Number % i == 0:
             return False
     return rabin_Miller(test_Number)
@@ -78,7 +79,7 @@ def rabin_Miller(test_Number: int):
     return True
 
 
-def calculate_Private_Key(byte_length: int, p: int):
+def calculate_Private_Key(bit_length: int, p: int):
     """
     Provided a byte length, find a random exponent (integer value)
     of that bit size -1  to use as a private key for Diffie-Hellman
@@ -107,11 +108,7 @@ def generate_Public_Key(g: int, private_key: int, prime_number: int):
 
 def calculate_Shared_Key(g: int, public_key_a: int, public_key_b: int, prime_number: int):  # Exchange public keys to use for calculating the shared key (Diffie-Hellman step 4-5)
     """Calculate the shared key using the provided ground public key, space public key, and large prime number"""
-    ## Original attempt:
-    #K = pow(public_key_a, public_key_b) % prime_number  ## Idea is :  pow(g, kakb) % prime_number
-
     kakb = public_key_a * public_key_b
-    #print(f'kakb = {kakb}, g = {g}, p = {prime_number}')
     sharedKey = pow(g, kakb, prime_number)
     return sharedKey
 
@@ -150,7 +147,6 @@ def calculate_generator(prime_number: int):
                     resultVal = (resultVal * x) % prime_number
                 divisor = divisor >> 1  # y = y/2
                 x = (x * x) % prime_number
-                ## --
             if (resultVal == 1):  # r^((phi)/primefactors) % n ?= 1 --> might need to implement different check here?
                 flag = True
                 break
@@ -159,8 +155,8 @@ def calculate_generator(prime_number: int):
         if (flag == False):
             return possible_gen
 
-            # Print Error? -> No primitive root found if -1 returned
-    return -1
+    raise Exception("No Primitive root found.")
+
 
 
 #### Main for Testing:
@@ -170,7 +166,8 @@ def main():
 
     g = calculate_generator(p)  ## for p = generate_Random_Prime_Number(58)  -test case - successsful - 4/2/2021 -3:18AM
                                 #   if p = generate_Random_Prime_Number( numberUsed>58 )
-    print(f' prime number: {p} \n generator: {g} ')
+    print(f' prime number: {p}' )
+    print(f' generator: {g} ')
 
     ground_private_key = calculate_Private_Key(32,p)  # -test case - successful for p with bit size 22 - 4/2/2021 -3:18AM
     space_private_key = calculate_Private_Key(32,p)  # -test case - successful for p with bit size 22 - 4/2/2021 -3:18AM
@@ -190,9 +187,9 @@ def main():
     print(f' ground public key: {ground_public_key} ')
     print(f' space public key: {space_public_key}')
 
-    shared_key = calculate_Shared_Key(g,ground_public_key, space_public_key,p)  ## --issue at size 23 (takes long  time - need to figure out more efficient method)
+    # shared_key = calculate_Shared_Key(g,ground_public_key, space_public_key,p)  ## --issue at size 23 (takes long  time - need to figure out more efficient method)
 
-    print(f' shared key: {shared_key}')
+    # print(f' shared key: {shared_key}')
 
 
 if __name__ == '__main__':
