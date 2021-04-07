@@ -72,13 +72,13 @@ class SpaceMemoryManager(object):
         self.io_stream.seek(0,0) #set io head at row 0 col 0
         self.io_stream.truncate() #clear the file
         self.io_stream.write(b'\xFF'*512)
-
+"""
 def run():
     with SpaceMemoryManager() as m:
         #print(m.read_keyselection())
         m.write_key(b'\x42'*32)
         print(m.dump())
-        #m.clear()
+        #m.clear()"""
 
 if __name__ == "__main__":
     run()

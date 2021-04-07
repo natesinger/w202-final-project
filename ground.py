@@ -90,9 +90,6 @@ def run():
         selection = b'\x03'
         options = b'\xFF\xFF'
 
-    assert selection != None
-    assert options != None
-
     ## TODO validation to ensure two operations are not happing at once
     if total_commands_selected > 1:
         print("[!] Multiple operations selected, this is not currently supported")

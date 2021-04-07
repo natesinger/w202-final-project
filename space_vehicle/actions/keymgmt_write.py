@@ -1,3 +1,6 @@
+from space_vehicle.actions.keymgmt_regenerate import exchange_key
 
-def keymgmt_write(key_number:int):
-    print(f"Recieved: Key Managemnet Write, Key Index: {key_number}")
+def keymgmt_write(index:int):
+    print(f"Recieved: Key Managemnet Write, Key Index: {index}")
+
+    exchange_key(index)
