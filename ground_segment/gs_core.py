@@ -25,7 +25,8 @@ SERVER_PORT_SECONDARY = 54323
 START_INDICATOR = b'\xDE\xAD\xBE\xEF'
 STOP_INDICATOR = b'\xBE\xEF\xDE\xAD'
 
-PRIME_32 = number.getPrime(256)
+#PRIME_32 = number.getPrime(256)
+PRIME_32 = 97986164599350289895243135865017426483915340502510353307949542629286511269997
 GENERATOR = 2
 
 class DiffieHellmanKeyExchange:
@@ -150,8 +151,10 @@ def exchange_key(index:int):
         with conn: #conn extends contextlib
             frame_chunk = conn.recv(1024) #1kb chunks
 
-    #calcualte secret
-    dh_ground.generate_secret(int.from_bytes(frame_chunk[7:39], byteorder='big'))
+    sv_public_key = int.from_bytes(frame_chunk[7:39], byteorder='big')
+
+    #calculate secret
+    dh_ground.generate_secret(sv_public_key)
     print(f"[+] Got SV pubkey from vehicle downlink")
     time.sleep(1)
 
@@ -176,15 +179,5 @@ def exchange_key(index:int):
 
     if frame_chunk[7:10] == b'ack': print('[+] Server acknowledged exchange(key)')
 
-    print(f'GS P: {PRIME_32}')
-    print(f'GS G: {GENERATOR}')
-    print(f'GS PUBLIC: {dh_ground.public_key}')
-    print(f'GS PRIVATE: {dh_ground.private_key}')
-    print(f'GS FINAL KEY: {dh_ground.key}')
-
-    """
-
-        #2 recieve public key from ground
-        #2r send public key to ground
-        #3 recieve symetric key
-        #3r send ack to ground"""
+    
+    print(f'STORED KEY: {dh_ground.key}')

@@ -14,7 +14,7 @@ CLIENT_PORT = 54322
 SERVER_HOST_SECONDARY = 'localhost'
 SERVER_PORT_SECONDARY = 54323
 
-PRIME_32 = None
+PRIME_32 = 97986164599350289895243135865017426483915340502510353307949542629286511269997
 GENERATOR = 2
 
 class DiffieHellmanKeyExchange:
@@ -77,7 +77,8 @@ def keymgmt_write(index:int, payload:str):
     print(f"[!] Recieved key-overwrite request, index: {index}")
 
     #1. recieves public knowledge p and g
-    PRIME_32 = int.from_bytes(payload[:32], byteorder='big')
+    #PRIME_32 = int.from_bytes(payload[7:32], byteorder='big')
+    #ERRORS.....
     dh_sv = DiffieHellmanKeyExchange()
     #g = int.from_bytes(payload[32:40], byteorder='little')
 
@@ -110,7 +111,8 @@ def keymgmt_write(index:int, payload:str):
 
     dh_sv.generate_private_key(256)
     dh_sv.generate_public_key()
-    sv_public_key_transmission = dh_ground.public_key.to_bytes(32,byteorder='big')
+
+    sv_public_key_transmission = dh_sv.public_key.to_bytes(32,byteorder='big')
 
     run_communication_local(selection,options,sv_public_key_transmission)
     print(f"  [+] Sent SV public key down to ground")
@@ -126,7 +128,7 @@ def keymgmt_write(index:int, payload:str):
             frame_chunk = conn.recv(1024) #1kb chunks
 
     #calculate secret
-    dh_sv.generate_secret(int.from_bytes(frame_chunk[7:39], byteorder='big'))
+    dh_sv.generate_secret(ground_public_key)
     print(f"  [+] Got symmetric key from ground segment")
     time.sleep(1)
 
@@ -135,8 +137,5 @@ def keymgmt_write(index:int, payload:str):
     run_communication_local(b'\x01',options,b'ack')
     print(f"  [+] Sent acknowledgment")
 
-    print(f'GS P: {PRIME_32}')
-    print(f'GS G: {GENERATOR}')
-    print(f'GS PUBLIC: {dh_sv.public_key}')
-    print(f'GS PRIVATE: {dh_sv.private_key}')
-    print(f'GS FINAL KEY: {dh_sv.key}')
+
+    print(f'STORED KEY: {dh_sv.key}')
