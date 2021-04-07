@@ -7,10 +7,12 @@ from ground_segment.actions.signature_validation import *
 from ground_segment.actions.data_send import *
 from Crypto.Util import number
 import socket
+import secrets
 import time
 import random
 import hashlib
 import ssl
+from ground_segment.simulated_memory import *
 random_function = ssl.RAND_bytes
 
 SERVER_HOST = 'localhost'
@@ -29,6 +31,7 @@ STOP_INDICATOR = b'\xBE\xEF\xDE\xAD'
 PRIME_32 = 97986164599350289895243135865017426483915340502510353307949542629286511269997
 GENERATOR = 2
 
+#https://chrisvoncsefalvay.com/2016/04/27/diffie-hellman-in-under-25-lines/
 class DiffieHellmanKeyExchange:
     def __init__(self, key_length=256):
         self.key_length = max(256, key_length)
@@ -159,8 +162,7 @@ def exchange_key(index:int):
     time.sleep(1)
 
     #3 Calculate and send actual symmetric key for overwite
-    int.from_bytes(frame_chunk[7:39], byteorder='big')
-    symmetric_key = number.getPrime(256)
+    symmetric_key = 1234567890
     symmetric_key_transmission = symmetric_key.to_bytes(32,byteorder='big')
 
     run_communication_local(selection,options,symmetric_key_transmission)
@@ -179,5 +181,8 @@ def exchange_key(index:int):
 
     if frame_chunk[7:10] == b'ack': print('[+] Server acknowledged exchange(key)')
 
-    
-    print(f'STORED KEY: {dh_ground.key}')
+    with GroundMemoryManager() as m:
+        m.write_keyselection(index)
+        m.write_key(str.encode(dh_ground.key[:32]))
+
+    print(f'STORED KEY: {dh_ground.key[:32]}')

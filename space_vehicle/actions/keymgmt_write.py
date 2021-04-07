@@ -4,6 +4,7 @@ import random
 import hashlib
 import ssl
 random_function = ssl.RAND_bytes
+from space_vehicle.simulated_memory import *
 
 START_INDICATOR = b'\xDE\xAD\xBE\xEF'
 STOP_INDICATOR = b'\xBE\xEF\xDE\xAD'
@@ -17,6 +18,7 @@ SERVER_PORT_SECONDARY = 54323
 PRIME_32 = 97986164599350289895243135865017426483915340502510353307949542629286511269997
 GENERATOR = 2
 
+#https://chrisvoncsefalvay.com/2016/04/27/diffie-hellman-in-under-25-lines/
 class DiffieHellmanKeyExchange:
     def __init__(self, key_length=256):
         self.key_length = max(256, key_length)
@@ -137,5 +139,8 @@ def keymgmt_write(index:int, payload:str):
     run_communication_local(b'\x01',options,b'ack')
     print(f"  [+] Sent acknowledgment")
 
+    with SpaceMemoryManager() as m:
+        m.write_keyselection(index)
+        m.write_key(str.encode(dh_sv.key[:32]))
 
-    print(f'STORED KEY: {dh_sv.key}')
+    print(f'STORED KEY: {dh_sv.key[:32]}')
