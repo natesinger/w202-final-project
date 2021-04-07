@@ -5,8 +5,6 @@ import threading
 import socket
 import time
 
-CLIENT_HOST = '127.0.0.1'
-CLIENT_PORT = '54322'
 
 def run_sv(bind_port:int=54321):
     """Primary function to initialize server backend, giving the user pretext and
@@ -64,19 +62,6 @@ def start_server(bind_port:int=54321):
         except OSError:
             print("[!] The server couldnt start, likely due to a socket conflict. If this is due to devlopment actions give it 60s for the old socket to destruct... if this is not due to development actions, deconflict.")
             exit()
-        io.close()
-
-def run_communication(selection:str, options:str, payload:str):
-    if payload == None: payload = b'\xFF' * 1012 #if no payload specified
-    if len(payload) < 1012: payload = payload + (b'\xFF' * (1012 - len(payload)))
-
-    checksum = generate_checksum(START_INDICATOR + selection + options + payload + STOP_INDICATOR)
-
-    test_frame = START_INDICATOR + selection + options + payload + checksum + STOP_INDICATOR
-
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as io:
-        io.connect((CLIENT_HOST,CLIENT_PORT))
-        io.send(test_frame)
         io.close()
 
 def generate_checksum(frame_data):

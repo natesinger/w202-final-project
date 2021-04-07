@@ -83,7 +83,7 @@ class Frame:
 
         if options[0] == 1: keymgmt_wipe()
         elif options[0] == 2: keymgmt_select(options[1])
-        elif options[0] == 3: keymgmt_write(options[1])
+        elif options[0] == 3: keymgmt_write(options[1], payload)
         elif options[0] == 4: keymgmt_regenerate()
         else: raise InvalidFrameError
 
