@@ -4,6 +4,12 @@ from ground_segment.actions.assemble_payload import *
 from misc.tools import ansi_esc
 import argparse
 import math
+import base64
+from Crypto import Random
+from ground_segment.simulated_memory import *
+import time
+import pyaes
+import base64
 
 def run():
     """
@@ -76,6 +82,12 @@ def run():
             print(f"[!] Invalid key management operation: {args.keymgmt}")
             exit()
 
+        p = (541).to_bytes(32, byteorder='big') #256 bit, but have to do this because it doesnt work rn
+        g = (101010).to_bytes(8, byteorder='big')
+        #g = calculate_generator(p) #this doesnt work
+
+        payload = p + g
+
     send_data = None
     if args.senddata != None:
         if len(args.senddata) > 992:
@@ -84,7 +96,18 @@ def run():
 
         total_commands_selected += 1
         selection = b'\x02'
-        payload, options = assemble_payload(args.senddata) #options as payload len
+
+        key = None
+        with GroundMemoryManager() as m:
+            key = m.read_key()
+
+        aes = pyaes.AESModeOfOperationCTR(key)
+        plaintext = args.senddata
+        ciphertext = aes.encrypt(plaintext)
+        payload = base64.b64encode(ciphertext)
+
+        print(f"[!] Sending CT (b64 encoded): {payload.decode()}")
+        options = len(payload).to_bytes(2, byteorder='big')
 
     if args.signature_validation != False: #this needs to get fixed
         total_commands_selected += 1
@@ -99,14 +122,8 @@ def run():
         parser.print_help()
         exit()
     else:
-        #DEBUG print(f"Selection: {selection}\nOptions: {options}\nPayload: {payload}")
+        #print(f"Selection: {selection}\nOptions: {options}\nPayload: {payload}")
         #set initial payload for key exchange here due to runing out of time
-        p = (541).to_bytes(32, byteorder='big') #256 bit, but have to do this because it doesnt work rn
-        g = (101010).to_bytes(8, byteorder='big')
-        #g = calculate_generator(p) #this doesnt work
-
-        payload = p + g
-
         run_communication(selection, options, payload) #execute
 
 def get_index():

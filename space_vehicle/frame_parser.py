@@ -4,7 +4,7 @@ from space_vehicle.actions.keymgmt_wipe import *
 from space_vehicle.actions.keymgmt_write import *
 from space_vehicle.actions.keymgmt_regenerate import *
 from space_vehicle.actions.signature_validation import *
-from space_vehicle.actions.data_send import *
+from space_vehicle.actions.data_recv import *
 
 class Frame:
     """"""
@@ -95,7 +95,7 @@ class Frame:
         param::str::options two byte options field
         param::str::payload data to exchange, key is already selected in memory"""
 
-        data_send(options, payload)
+        data_recv(options, payload)
 
     def selection_firmware_validation(self):
         """I think we will want to simulate this, something like creating a file

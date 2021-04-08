@@ -4,7 +4,6 @@ from ground_segment.actions.keymgmt_wipe import *
 from ground_segment.actions.keymgmt_write import *
 from ground_segment.actions.keymgmt_regenerate import *
 from ground_segment.actions.signature_validation import *
-from ground_segment.actions.data_send import *
 from Crypto.Util import number
 import socket
 import secrets
@@ -53,25 +52,33 @@ class DiffieHellmanKeyExchange:
         self.key = hash_alg.hexdigest()
 
 def run_communication(selection:str, options:str, payload:str):
-    if payload == None: payload = b'\xFF' * 1012 #if no payload specified
-    if len(payload) < 1012: payload = payload + (b'\xFF' * (1012 - len(payload)))
-
-    checksum = generate_checksum(START_INDICATOR + selection + options + payload + STOP_INDICATOR)
-
-    c2_frame = START_INDICATOR + selection + options + payload + checksum + STOP_INDICATOR
-
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as io:
         io.connect((SERVER_HOST,SERVER_PORT))
 
         if (selection == b'\x01') and (options[0] == 1): #key wipe
+            if payload == None: payload = b'\xFF' * 1012 #if no payload specified
+            if len(payload) < 1012: payload = payload + (b'\xFF' * (1012 - len(payload)))
+            checksum = generate_checksum(START_INDICATOR + selection + options + payload + STOP_INDICATOR)
+            c2_frame = START_INDICATOR + selection + options + payload + checksum + STOP_INDICATOR
+
             keymgmt_wipe()
             io.send(c2_frame)
             time.sleep(2) #doesnt trip on itself due to threading
         elif (selection == b'\x01') and (options[0] == 2): #key select
+            if payload == None: payload = b'\xFF' * 1012 #if no payload specified
+            if len(payload) < 1012: payload = payload + (b'\xFF' * (1012 - len(payload)))
+            checksum = generate_checksum(START_INDICATOR + selection + options + payload + STOP_INDICATOR)
+            c2_frame = START_INDICATOR + selection + options + payload + checksum + STOP_INDICATOR
+
             keymgmt_select(options[1])
             io.send(c2_frame)
             time.sleep(2) #doesnt trip on itself due to threading
         elif (selection == b'\x01') and (options[0] == 3): #key write
+            if payload == None: payload = b'\xFF' * 1012 #if no payload specified
+            if len(payload) < 1012: payload = payload + (b'\xFF' * (1012 - len(payload)))
+            checksum = generate_checksum(START_INDICATOR + selection + options + payload + STOP_INDICATOR)
+            c2_frame = START_INDICATOR + selection + options + payload + checksum + STOP_INDICATOR
+
             io.send(c2_frame)
             exchange_key(options[1])
             time.sleep(2) #doesnt trip on itself due to threading
@@ -82,8 +89,15 @@ def run_communication(selection:str, options:str, payload:str):
                 options = b'\x03'+(index).to_bytes(1, byteorder='big')
                 run_communication(b'\x01',options,b'')
             time.sleep(2) #doesnt trip on itself due to threading"""
-        elif (selection == b'\x02') and (options[0] == 2): #data exchange
-            pass
+        elif (selection == b'\x02'): #data exchange
+
+
+            if payload == None: payload = b'\xFF' * 1012 #if no payload specified
+            if len(payload) < 1012: payload = payload + (b'\xFF' * (1012 - len(payload)))
+            checksum = generate_checksum(START_INDICATOR + selection + options + payload + STOP_INDICATOR)
+            c2_frame = START_INDICATOR + selection + options + payload + checksum + STOP_INDICATOR
+
+            io.send(c2_frame)
         elif (selection == b'\x03') and (options[0] == 2): #firmware validation
             pass
 
