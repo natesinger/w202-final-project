@@ -5,6 +5,7 @@ import threading
 import socket
 import time
 
+
 def run_sv(bind_port:int=54321):
     """Primary function to initialize server backend, giving the user pretext and
     further coordinating thread interactions, specifically handling escape chars
@@ -62,6 +63,10 @@ def start_server(bind_port:int=54321):
             print("[!] The server couldnt start, likely due to a socket conflict. If this is due to devlopment actions give it 60s for the old socket to destruct... if this is not due to development actions, deconflict.")
             exit()
         io.close()
+
+def generate_checksum(frame_data):
+    #this is generated as single byte addition mod \xFF but skipping the checksum byte position obviously
+    return b'\xFF'
 
 class ActiveConnectionBar:
     """Runs a parallel thread to display realtime indicator of active connection,
